@@ -34,6 +34,27 @@
             </div>
 
         </div>
+        <div class="row">
+            <div class="col-12">
+                <table class="table" id="bill_data_table">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Products</th>
+                        <th scope="col">Qunaty</th>
+                        <th scope="col">Unit Price</th>
+                        <th scope="col">TotalPrice</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      
+                    
+                    </tbody>
+                  </table>
+                  <button class="btn btn-dark" value="print">Print</button>
+            </div>
+        </div>
+
     </div>
     <style>
         input{
@@ -156,10 +177,66 @@
                qty.focus();
 
             }
+            else{
+                
+                if(glb_select_pid==0){
+                    alert("Please Select A Product");
+                }
+                else{
+                    var selected_item_price=get_unit_price_of_selectid(glb_select_pid);
+                    total_price=selected_item_price*parseInt(qty.value);
+                    var selected_product_data=get_product_details(glb_select_pid);
+                    create_bill(selected_product_data,qty.value,total_price);
+                    qty.value="";
+                    p_container.style.display="none";
+                    glb_select_pid=0;
+                    generate_bill_to_table();
+                    
+                }
+               
+
+            }
             
         }
         //Add Item  to bill
+        //Function for generate bill
+        function create_bill(product_details,qty,total_price)
+        {
+            bill_len=bill_data.length;
+            bill_len++;
+            var item_obj={id:bill_len,product_data:product_details,quantity:qty,total:total_price};
+            bill_data.push(item_obj);
+            //console.log(bill_data);
+            
+
+        }
+        //Function for generate bill
+        //Function generate bill to table
+        function generate_bill_to_table(){
+            var bill_table=document.querySelector('#bill_data_table tbody');
+            document.querySelectorAll("#bill_data_table tbody tr").forEach(function(e){e.remove()});
+            bill_len=bill_data.length;
+            if(bill_len>0){
+                for(i=0,j=1;i<bill_data.length;i++,j++){
+                    //console.log(bill_data[i]);
+                    trow=bill_table.insertRow(i);
+                    a_cell=trow.insertCell(0);
+                    a_cell.innerHTML=j;
+                    b_cell=trow.insertCell(1);
+                    b_cell.innerHTML=bill_data[i].product_data.p_name;
+                    c_cell=trow.insertCell(2);
+                    c_cell.innerHTML=bill_data[i].quantity;
+                    d_cell=trow.insertCell(3);
+                    d_cell.innerHTML=bill_data[i].product_data.price;
+                    e_cell=trow.insertCell(4);
+                    e_cell.innerHTML=bill_data[i].total;
+
+                }
+            }
+        }
+        //function generate bill to table
         generate_buttons(products);
+        
         // const startDate  = '2023-03-25';
         // const endDate    = '2023-03-26';
         // const diffInMs   = new Date(endDate) - new Date(startDate)
